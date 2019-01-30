@@ -67,6 +67,7 @@ public class LightboxConfig {
     public static var text = NSLocalizedString("Close", comment: "")
     public static var image: UIImage?
     public static var position: ButtonPosition = .right
+    public static var tintColor: UIColor?
 
     public static var textAttributes: [NSAttributedString.Key: Any] = [
       .font: UIFont.boldSystemFont(ofSize: 16),
@@ -85,10 +86,30 @@ public class LightboxConfig {
     public static var text = NSLocalizedString("Delete", comment: "")
     public static var image: UIImage?
     public static var position: ButtonPosition = .left
+    public static var tintColor: UIColor?
 
     public static var textAttributes: [NSAttributedString.Key: Any] = [
       .font: UIFont.boldSystemFont(ofSize: 16),
       .foregroundColor: UIColor(hex: "FA2F5B"),
+      .paragraphStyle: {
+        var style = NSMutableParagraphStyle()
+        style.alignment = .center
+        return style
+      }()
+    ]
+  }
+
+  public struct CustomButton {
+    public static var enabled = false
+    public static var size: CGSize?
+    public static var text = NSLocalizedString("Custom", comment: "")
+    public static var image: UIImage?
+    public static var position: ButtonPosition = .left
+    public static var tintColor: UIColor?
+
+    public static var textAttributes: [NSAttributedString.Key: Any] = [
+      .font: UIFont.boldSystemFont(ofSize: 16),
+      .foregroundColor: UIColor.white,
       .paragraphStyle: {
         var style = NSMutableParagraphStyle()
         style.alignment = .center

@@ -3,6 +3,7 @@ import UIKit
 protocol HeaderViewDelegate: class {
   func headerView(_ headerView: HeaderView, didPressDeleteButton deleteButton: UIButton)
   func headerView(_ headerView: HeaderView, didPressCloseButton closeButton: UIButton)
+  func headerView(_ headerView: HeaderView, didPressCustomButton customButton: UIButton)
 }
 
 open class HeaderView: UIView {
@@ -25,7 +26,11 @@ open class HeaderView: UIView {
       for: .touchUpInside)
 
     if let image = LightboxConfig.CloseButton.image {
-        button.setBackgroundImage(image, for: UIControl.State())
+      button.setBackgroundImage(image, for: UIControl.State())
+    }
+
+    if let tintColor = LightboxConfig.CloseButton.tintColor {
+      button.tintColor = tintColor
     }
 
     button.isHidden = !LightboxConfig.CloseButton.enabled
@@ -52,12 +57,49 @@ open class HeaderView: UIView {
       for: .touchUpInside)
 
     if let image = LightboxConfig.DeleteButton.image {
-        button.setBackgroundImage(image, for: UIControl.State())
+      button.setBackgroundImage(image, for: UIControl.State())
+    }
+
+    if let tintColor = LightboxConfig.DeleteButton.tintColor {
+      button.tintColor = tintColor
     }
 
     button.isHidden = !LightboxConfig.DeleteButton.enabled
 
     return button
+  }()
+
+  open fileprivate(set) lazy var customButton: UIButton = { [unowned self] in
+    let title = NSAttributedString(
+      string: LightboxConfig.CustomButton.text,
+      attributes: LightboxConfig.CustomButton.textAttributes)
+
+      let button = UIButton(type: .system)
+      button.contentMode = .center
+
+      button.setAttributedTitle(title, for: .normal)
+
+      if let size = LightboxConfig.CustomButton.size {
+        button.frame.size = size
+      } else {
+        button.sizeToFit()
+      }
+
+      button.addTarget(self, action: #selector(customButtonDidPress(_:)),
+        for: .touchUpInside)
+
+      if let image = LightboxConfig.CustomButton.image {
+        button.setImage(image, for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
+      }
+
+      if let tintColor = LightboxConfig.CustomButton.tintColor {
+        button.tintColor = tintColor
+      }
+
+      button.isHidden = !LightboxConfig.CustomButton.enabled
+
+      return button
   }()
 
   weak var delegate: HeaderViewDelegate?
@@ -69,7 +111,7 @@ open class HeaderView: UIView {
 
     backgroundColor = UIColor.clear
 
-    [closeButton, deleteButton].forEach { addSubview($0) }
+    [closeButton, deleteButton, customButton].forEach { addSubview($0) }
   }
 
   public required init?(coder aDecoder: NSCoder) {
@@ -84,6 +126,10 @@ open class HeaderView: UIView {
 
   @objc func closeButtonDidPress(_ button: UIButton) {
     delegate?.headerView(self, didPressCloseButton: button)
+  }
+
+  @objc func customButtonDidPress(_ button: UIButton) {
+    delegate?.headerView(self, didPressCustomButton: button)
   }
 }
 
@@ -108,6 +154,11 @@ extension HeaderView: LayoutConfigurable {
 
     deleteButton.frame.origin = CGPoint(
       x: (LightboxConfig.DeleteButton.position == .left) ? sidePadding : bounds.width - deleteButton.frame.width - sidePadding,
+      y: topPadding
+    )
+
+    customButton.frame.origin = CGPoint(
+      x: (LightboxConfig.CustomButton.position == .left) ? sidePadding : bounds.width - customButton.frame.width - sidePadding,
       y: topPadding
     )
   }

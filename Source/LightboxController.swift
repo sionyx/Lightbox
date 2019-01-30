@@ -15,6 +15,11 @@ public protocol LightboxControllerTouchDelegate: class {
   func lightboxController(_ controller: LightboxController, didTouch image: LightboxImage, at index: Int)
 }
 
+public protocol LightboxControllerCustomButtonDelegate: class {
+
+  func lightboxController(_ controller: LightboxController, didTapCustomButton customButton: UIButton)
+}
+
 open class LightboxController: UIViewController {
 
   // MARK: - Internal views
@@ -139,6 +144,7 @@ open class LightboxController: UIViewController {
   open weak var pageDelegate: LightboxControllerPageDelegate?
   open weak var dismissalDelegate: LightboxControllerDismissalDelegate?
   open weak var imageTouchDelegate: LightboxControllerTouchDelegate?
+  open weak var customButtonDelegate: LightboxControllerCustomButtonDelegate?
   open internal(set) var presented = false
   open fileprivate(set) var seen = false
 
@@ -203,9 +209,16 @@ open class LightboxController: UIViewController {
       y: view.bounds.height - footerView.frame.height
     )
 
+    let topPadding: CGFloat
+    if #available(iOS 11, *) {
+        topPadding = view.safeAreaInsets.top
+    } else {
+        topPadding = 20
+    }
+
     headerView.frame = CGRect(
       x: 0,
-      y: 20,
+      y: topPadding,
       width: view.bounds.width,
       height: 44
     )
@@ -450,6 +463,10 @@ extension LightboxController: HeaderViewDelegate {
     presented = false
     dismissalDelegate?.lightboxControllerWillDismiss(self)
     dismiss(animated: true, completion: nil)
+  }
+
+  func headerView(_ headerView: HeaderView, didPressCustomButton customButton: UIButton) {
+    customButtonDelegate?.lightboxController(self, didTapCustomButton: customButton)
   }
 }
 
