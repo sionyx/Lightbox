@@ -92,6 +92,7 @@ open class HeaderView: UIView {
 extension HeaderView: LayoutConfigurable {
 
   @objc public func configureLayout() {
+    let sidePadding: CGFloat = 17
     let topPadding: CGFloat
 
     if #available(iOS 11, *) {
@@ -101,12 +102,12 @@ extension HeaderView: LayoutConfigurable {
     }
 
     closeButton.frame.origin = CGPoint(
-      x: bounds.width - closeButton.frame.width - 17,
+      x: (LightboxConfig.CloseButton.position == .left) ? sidePadding : bounds.width - closeButton.frame.width - sidePadding,
       y: topPadding
     )
 
     deleteButton.frame.origin = CGPoint(
-      x: 17,
+      x: (LightboxConfig.DeleteButton.position == .left) ? sidePadding : bounds.width - deleteButton.frame.width - sidePadding,
       y: topPadding
     )
   }
